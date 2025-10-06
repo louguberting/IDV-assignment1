@@ -1,5 +1,23 @@
 <!DOCTYPE html>
 <html>
+<script type="module">
+
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+
+fetch('https://api.data.gov.sg/v1/environment/psi')
+ .then(r => r.json())
+ .then(data => {
+ d3.select('#timestring').text(data.items[0].update_timestamp);
+ let readings = data.items[0].readings;
+ Object.keys(readings).forEach(metric => {
+ let row = d3.select('#PSItable').append('tr');
+ row.append('td').text(metric);
+ ['central','west','east','north','south'].forEach(region => {
+ row.append('td').text(readings[metric][region]);
+ });
+ });
+ })
+</script>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +27,8 @@
 <body>
 <h1>Assignment 1</h1>
 <h2>Singapore PSI table</h2>
-<h4>The data is going to go here</h4>
+<h4 id='timestring'></h4>
+<table id='PSItable'></table>
+
 </body>
 </html>
