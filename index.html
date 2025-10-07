@@ -1,18 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="synthwave">
 <script type="module">
 
 import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
 
+const dateFormatter = d3.timeFormat("%c")
+
 fetch('https://api.data.gov.sg/v1/environment/psi')
  .then(r => r.json())
  .then(data => {
- d3.select('#timestring').text(data.items[0].update_timestamp);
+
+ const humandate = dateFormatter(new Date(data.items[0].update_timestamp))
+ d3.select('#timestring').text(humandate);
  let readings = data.items[0].readings;
  Object.keys(readings).forEach(metric => {
  let row = d3.select('#PSItable').append('tr');
  row.append('td').text(metric);
- ['central','west','east','north','south'].forEach(region => {
+ ['west','east','central','south','north'].forEach(region => {
  row.append('td').text(readings[metric][region]);
  });
  });
@@ -21,6 +25,8 @@ fetch('https://api.data.gov.sg/v1/environment/psi')
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="https://cdn.jsdelivr.net/combine/npm/daisyui@5/base/rootscrollgutter.css,npm/daisyui@5/base/scrollbar.css,npm/daisyui@5/base/rootcolor.css,npm/daisyui@5/base/rootscrolllock.css,npm/daisyui@5/base/reset.css,npm/daisyui@5/base/svg.css,npm/daisyui@5/base/properties.css,npm/daisyui@5/components/table.css,npm/daisyui@5/theme/synthwave.css" rel="stylesheet" type="text/css" />
+
 	<link rel="stylesheet" href="styles.css" />
 	<title>Assignment 1</title>
 </head>
@@ -28,7 +34,14 @@ fetch('https://api.data.gov.sg/v1/environment/psi')
 <h1>Assignment 1</h1>
 <h2>Singapore PSI table</h2>
 <h4 id='timestring'></h4>
-<table id='PSItable'></table>
+<table id='PSItable' class="table">
+	<th>Metric</th>
+	<th>West</th>
+	<th>East</th>
+	<th>Central</th>
+	<th>South</th>
+	<th>North</th>
+</table>
 
 </body>
 </html>
